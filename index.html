@@ -39,7 +39,11 @@ var width = 850,
     dot_size = 3.5
 
 var vertices = 
-[[137,239],[143,239],[58,285],[51,284],[402,491],[472,240],[505,245],[268,240],[274,240],[671,239],[676,235],[633,12],[348,40],[508,240],[553,225],[669,229]]
+[[137,239],[143,239],[58,285],[51,284],[402,491],[472,240],[505,245],[268,240],[274,240],[671,239],[676,235],[633,12],[348,40],[508,240],[553,225],[669,229]];
+
+if ( window.location.hash ) {
+  vertices = JSON.parse(window.location.hash.split('#')[1]);
+}
 
 var voronoi = d3.geom.voronoi()
     .clipExtent([[0, 0], [width, height]]);
@@ -97,6 +101,7 @@ circles.data(vertices)
   path.order();
 
   $('#output').val(JSON.stringify(vertices))
+  window.location.hash = JSON.stringify(vertices);
 
 }
 
