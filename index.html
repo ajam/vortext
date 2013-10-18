@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+body{
+	margin: 0;
+}
+
+path {
+  stroke: #fff;
+  /*pointer-events: none;*/
+}
+
+circle {
+  fill: #000;
+  /*pointer-events: none;*/
+}
+
+.q0-9 { fill: rgb(197,27,125); }
+.q1-9 { fill: rgb(197,27,125); }
+.q2-9 { fill: rgb(197,27,125); }
+.q3-9 { fill: rgb(197,27,125); }
+.q4-9 { fill: rgb(197,27,125); }
+.q5-9 { fill: rgb(197,27,125); }
+.q6-9 { fill: rgb(197,27,125); }
+.q7-9 { fill: rgb(197,27,125); }
+.q8-9 { fill: rgb(197,27,125); }
+
+</style>
+<body>
+	<div id="canvas"></div>
+	<textarea id="output" rows="3" cols="118"></textarea>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<script src="http://underscorejs.org/underscore-min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+var width = 850,
+    height = 500,
+    dot_size = 3.5
+
+var vertices = 
+[[137,239],[143,239],[58,285],[51,284],[402,491],[472,240],[505,245],[268,240],[274,240],[671,239],[676,235],[633,12],[348,40],[508,240],[553,225],[669,229]]
+console.log(vertices);
+
+var voronoi = d3.geom.voronoi()
+    .clipExtent([[0, 0], [width, height]]);
+
+var svg = d3.select("#canvas").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .on("mousemove", function() { console.log( d3.mouse(this) ) });
+
+var path   = svg.append("g").selectAll("path");
+var circles = svg.selectAll('circle').data(vertices, function(d) { return d})
+
+
+draw();
+
+function killCircle(d){
+	$('circle[transform="translate(' + d.join(',') + ')"]').remove()
+
+}
+var drag = d3.behavior.drag()
+    .origin(Object)
+    .on("drag", dragmove);
+
+
+
+function dragmove(d) {
+  d3.select(this)
+      .attr("cx", d.x = Math.max(radius, Math.min(width - radius, d3.event.x)))
+      .attr("cy", d.y = Math.max(radius, Math.min(height - radius, d3.event.y)));
+}
+
+function addShape(position){
+	console.log('add')
+	vertices.push( d3.mouse(position) ); draw();
+}
+
+
+function draw() {
+circles.data(vertices)
+  .enter()
+  .append("circle")
+    .attr("transform", function(d) { return "translate(" + d + ")"; })
+    .attr("r", dot_size)
+    .on('click', function(d) { vertices = _.without(vertices, d); killCircle(d); draw() } );
+
+
+  path = path
+      .data(voronoi(vertices), polygon);
+
+  path.exit().remove();
+
+  path.enter().append("path")
+      .attr("class", function(d, i) { return "q" + (i % 9) + "-9"; })
+      .attr("d", polygon)
+	    .on("click", function() {  addShape(this); });
+  path.order();
+
+  $('#output').val(JSON.stringify(vertices))
+
+}
+
+function polygon(d) {
+  return "M" + d.join("L") + "Z";
+}
+
+</script>
