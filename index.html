@@ -40,15 +40,13 @@ var width = 850,
 
 var vertices = 
 [[137,239],[143,239],[58,285],[51,284],[402,491],[472,240],[505,245],[268,240],[274,240],[671,239],[676,235],[633,12],[348,40],[508,240],[553,225],[669,229]]
-console.log(vertices);
 
 var voronoi = d3.geom.voronoi()
     .clipExtent([[0, 0], [width, height]]);
 
 var svg = d3.select("#canvas").append("svg")
     .attr("width", width)
-    .attr("height", height)
-    .on("mousemove", function() { console.log( d3.mouse(this) ) });
+    .attr("height", height);
 
 var path   = svg.append("g").selectAll("path");
 var circles = svg.selectAll('circle').data(vertices, function(d) { return d})
