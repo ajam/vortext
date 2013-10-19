@@ -115,7 +115,13 @@ circles.data(vertices)
   .append("circle")
     .attr("transform", function(d) { return "translate(" + d + ")"; })
     .attr("r", dot_size)
-    .on('click', function(d) { vertices = _.without(vertices, d); killCircle(d); draw() } );
+    .on('click', function(d) { 
+      console.log(vertices.length);
+      if (vertices.length > 1) {
+        vertices = _.without(vertices, d); 
+        killCircle(d); draw() 
+      }
+    } );
 
 
   path = path
